@@ -4,67 +4,17 @@ Convolutional Neural Network model for malaria diagnosis based on cell images
 
 
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import tensorflow as tf
-import tensorflow_datasets as tfds
-# from keras import Sequential
-# from keras.layers import InputLayer, Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization
 from keras.optimizers import Adam
 from keras.losses import BinaryCrossentropy
 from sklearn.metrics import classification_report, confusion_matrix
 from model_maker import ModelArgs, make_sequential
+from data_retrive_transform import SplitRatios, get_dataset, ds_shuffle_split, transform_test
 
-
-##
-## Dataset load and data shuffle and split
-##
-dataset, dataset_info = tfds.load('malaria', with_info = True, as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
-
-print(dataset_info)
-
-def resize_rescalae_img(image, label):
-    return tf.image.resize(image, (224, 224)) / 255, label
-
-dataset = dataset['train'].map(resize_rescalae_img)
-
-DS_SIZE = len(dataset)
-TRAIN_R = 0.8
-VAL_R = 0.1
-TEST_R = 0.1
-
-dataset = dataset.shuffle(buffer_size = 8, reshuffle_each_iteration = True)
-
-train_ds = dataset.take(int(DS_SIZE * TRAIN_R))
-val_ds = dataset.skip(int(DS_SIZE * TRAIN_R)).take(int(DS_SIZE * VAL_R))
-test_ds = dataset.skip(int(DS_SIZE * TRAIN_R)).skip(int(DS_SIZE * VAL_R)).take(int(DS_SIZE * TEST_R))
-
-train_ds = train_ds.batch(64).prefetch(tf.data.AUTOTUNE)
-val_ds = val_ds.batch(64).prefetch(tf.data.AUTOTUNE)
-test_ds = test_ds.batch(1).prefetch(tf.data.AUTOTUNE)
-
-##
-## Model creation with Sequential
-##
-# model = Sequential([InputLayer(shape = (224, 224, 3)),
-#                     Conv2D(filters = 4, kernel_size = 3, strides = 1, padding = 'valid', activation = 'relu'),
-#                     BatchNormalization(),
-#                     MaxPool2D(pool_size = 2, strides = 2),
-#                     Conv2D(filters = 12, kernel_size = 4, strides = 1, padding = 'valid', activation = 'relu'),
-#                     BatchNormalization(),
-#                     MaxPool2D(pool_size = 2, strides = 2),
-#                     Conv2D(filters = 36, kernel_size = 6, strides = 1, padding = 'valid', activation = 'relu'),
-#                     BatchNormalization(),
-#                     MaxPool2D(pool_size = 2, strides = 2),
-#                     Flatten(),
-#                     Dense(60, activation = 'relu'),
-#                     BatchNormalization(),
-#                     Dense(10, activation = 'relu'),
-#                     BatchNormalization(),
-#                     Dense(1, activation = 'sigmoid')])
-
-# print(model.summary())
+dataset = get_dataset()
+ratios = SplitRatios(0.8, 0.1, 0.1)
+train_ds, val_ds, test_ds = ds_shuffle_split(dataset, ratios, 64)
 
 ##
 ## Model creation with module
@@ -98,18 +48,9 @@ plt.grid(True)
 print(f'Model eval: {model.evaluate(test_ds)}')
 
 ##
-## Transform test data and print reports
+## Print test prediction reports
 ##
-test_labels = []
-test_data = []
-for i, (data, label) in enumerate(test_ds):
-    test_labels.append(label)
-    test_data.append(data)
-
-test_labels = np.array(test_labels)
-test_data = np.array(test_data)
-test_data = np.array(test_data).reshape(2755, 224, 224, 3)
-
+test_data, test_labels = transform_test(test_ds)
 
 preds = model.predict(test_data)
 pred_classes = (preds > 0.5).astype('int32')
