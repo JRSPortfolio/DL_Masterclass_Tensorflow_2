@@ -17,14 +17,14 @@ class SplitRatios(dict):
 ##
 ## Donwload/load the malaria dataset, resize and resclae the images and return it
 ##
-def get_dataset():
-    dataset, dataset_info = tfds.load('malaria', with_info = True, as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
 
+def get_dataset():
     def resize_rescalae_img(image, label):
         return tf.image.resize(image, (224, 224)) / 255, label
+    dataset = tfds.load('malaria', as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
+    ds = dataset['train'].map(resize_rescalae_img)
+    return ds
 
-    dataset = dataset['train'].map(resize_rescalae_img)
-    return dataset
 
 ##
 ## Shuffle the dataset and return the train, validation and test splits
@@ -40,7 +40,7 @@ def ds_shuffle_split(ds, ratios: SplitRatios, batch_size: int):
     train_ds = train_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
     val_ds = val_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
     test_ds = test_ds.batch(1).prefetch(tf.data.AUTOTUNE)
-    
+        
     return train_ds, val_ds, test_ds
 
 ##
@@ -51,7 +51,7 @@ def transform_test(test_ds):
     test_data = []
     size = len(test_ds)
     
-    for i, (data, label) in enumerate(test_ds):
+    for data, label in test_ds.as_numpy_iterator():
         test_labels.append(label)
         test_data.append(data)
 
