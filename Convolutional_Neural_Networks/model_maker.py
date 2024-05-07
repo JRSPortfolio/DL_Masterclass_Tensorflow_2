@@ -19,7 +19,7 @@ class ModelArgs(dict):
             
 def make_sequential(model_args: ModelArgs):
     model = Sequential()
-    model.add(InputLayer(shape = model_args['shape']))
+    model.add(InputLayer(input_shape = model_args['shape'])) #input_shape changed to shape on tensorflow 2.16, but that version has unresolved issues with GPU recognition
     
     for key in model_args['img_args'].keys():
         model.add(Conv2D(filters = model_args['img_args'][key][0], kernel_size = model_args['img_args'][key][1],

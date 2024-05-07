@@ -6,6 +6,7 @@ Convolutional Neural Network model for malaria diagnosis based on cell images
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import tensorflow as tf
 from keras.optimizers import Adam
 from keras.losses import BinaryCrossentropy
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve
@@ -107,3 +108,5 @@ if __name__ == '__main__':
     model = create_module(train_ds, val_ds, model_args)
     evaluate_model(model, test_ds)
     save_model(model, 'malaria_diagnosis_03')
+
+
