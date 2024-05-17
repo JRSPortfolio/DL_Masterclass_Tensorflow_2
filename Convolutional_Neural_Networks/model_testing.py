@@ -8,13 +8,13 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 from keras.models import load_model
 
-dataset, dataset_info = tfds.load('malaria', with_info = True, as_supervised = True, shuffle_files = True, data_dir = 'Section_4/mds')
+dataset, dataset_info = tfds.load('malaria', with_info = True, as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
 
-model = load_model('Convolutional_Neural_Networks/malaria_diagnosis_model.keras')
+model = load_model('Convolutional_Neural_Networks/keras_models/malaria_diagnosis_da_01.keras')
 
 def resize_rescalae_img(image, label):
     image = tf.expand_dims(image, axis = 0)
-    return tf.image.resize(image, (224, 224)) / 255, label
+    return tf.image.resize(image, (180, 180)) / 255, label
 
 def assign_labels(result):
     if result == 1:
@@ -22,8 +22,8 @@ def assign_labels(result):
     else:
         return 'infected'
 
-random_list = np.random.randint(0, dataset['train'].reduce(0, lambda x, _: x + 1).numpy(), 30).tolist()
-fig, axes = plt.subplots(5, 6, figsize = (18, 9))
+random_list = np.random.randint(0, dataset['train'].reduce(0, lambda x, _: x + 1).numpy(), 60).tolist()
+fig, axes = plt.subplots(6, 10, figsize = (36, 18))
 plt.subplots_adjust(left = 0.04, right = 0.96, top = 0.95, bottom = 0.1, wspace = 0.6, hspace = 0.6)
 
 tf.experimental.numpy.experimental_enable_numpy_behavior()
@@ -38,7 +38,7 @@ for i in random_list:
         axes[ax_x, ax_y].imshow(img)
         axes[ax_x, ax_y].set_title(f"Real: {assign_labels(lbl)} | Pred: {assign_labels(pred)}")
         ax_y += 1
-        if ax_y == 6:
+        if ax_y == 10:
             ax_y = 0
             ax_x += 1
                 

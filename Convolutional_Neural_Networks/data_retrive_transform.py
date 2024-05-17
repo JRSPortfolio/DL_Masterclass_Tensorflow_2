@@ -15,14 +15,34 @@ class SplitRatios(dict):
     
 
 ##
-## Donwload/load the malaria dataset, resize and resclae the images and return it
+## Donwload/load the malaria dataset, resize and resclae the images, augment the dataset and return it
 ##
 
 def get_dataset():
     def resize_rescalae_img(image, label):
-        return tf.image.resize(image, (224, 224)) / 255, label
+        return tf.image.resize(image, (180, 180)) / 255, label
+    
+    def rotate_image(image, label):
+        return tf.image.rot90(image), label
+    
+    def flip_up_down_image(image, label):
+        return tf.image.flip_up_down(image), label
+    
+    def flip_left_right_image(image, label):
+        return tf. image.flip_left_right(image), label
+    
+    def augment_dataset(dataset):
+        ds = dataset.map(rotate_image)
+        return_ds = dataset.concatenate(ds)
+        ds = dataset.map(flip_up_down_image)
+        return_ds = return_ds.concatenate(ds)
+        # ds = dataset.map(flip_left_right_image)
+        # return_ds = return_ds.concatenate(ds)
+        return return_ds
+            
     dataset = tfds.load('malaria', as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
     ds = dataset['train'].map(resize_rescalae_img)
+    ds = augment_dataset(ds)
     return ds
 
 
@@ -57,6 +77,6 @@ def transform_test(test_ds):
 
     test_labels = np.array(test_labels)
     test_data = np.array(test_data)
-    test_data = np.array(test_data).reshape(size, 224, 224, 3)
+    test_data = np.array(test_data).reshape(size, 180, 180, 3)
     
     return test_data, test_labels

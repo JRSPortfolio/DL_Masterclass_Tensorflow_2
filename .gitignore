@@ -158,3 +158,6 @@ dmypy.json
 
 
 db_url.py
+
+# checkpoints
+model_checkpoints/
