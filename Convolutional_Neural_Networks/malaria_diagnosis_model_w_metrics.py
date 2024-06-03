@@ -7,15 +7,16 @@ import pandas as pd
 from numpy import arange
 import matplotlib.pyplot as plt
 import seaborn as sns
-from keras.optimizers import Adam
-from keras.losses import BinaryCrossentropy
-from keras.metrics import BinaryAccuracy, FalseNegatives, FalsePositives, TrueNegatives, TruePositives, Precision, Recall, AUC
-from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 import tensorflow as tf
+from tensorflow.keras.optimizers import Adam  #type: ignore
+from tensorflow.keras.losses import BinaryCrossentropy #type: ignore
+from tensorflow.keras.metrics import BinaryAccuracy, FalseNegatives, FalsePositives, TrueNegatives, TruePositives, Precision, Recall, AUC #type: ignore
+from tensorflow.keras.callbacks import LearningRateScheduler, ModelCheckpoint, TensorBoard #type: ignore
 from sklearn.metrics import classification_report, confusion_matrix, roc_curve
 from model_maker import ModelArgs, make_sequential
 from data_retrive_transform import SplitRatios, get_dataset, ds_shuffle_split, transform_test
-
+from datetime import datetime
+import tensorboard
 
 def get_splits_from_dataset():
     dataset = get_dataset()
@@ -27,7 +28,7 @@ def get_splits_from_dataset():
 ##
 ## Model creation with module
 ##
-EPOCHS = 9
+EPOCHS = 2
 
 # def scheduler(epoch, lr):
 #     if epoch <= 3:
@@ -60,11 +61,14 @@ def create_model(train, validation, model_args: ModelArgs):
     
     learning_rate_scheduler = LearningRateScheduler(scheduler, verbose = 1)
     # checkpoint_cb = checkpoint_callback()
+    tb_logdir = f"Convolutional_Neural_Networks/tensorboard_logs/{datetime.now().strftime('%d-%m-%Y_%H:%M')}/ia{str(model_args['img_args'])}_fa_{str(model_args['feat_args'])}"
+    tb_callback = TensorBoard(log_dir = tb_logdir, histogram_freq = 1, write_graph = True, update_freq = 'epoch')
+    
     
     metrics = [TruePositives(name = 'tp'), FalsePositives(name = 'fp'), TrueNegatives(name = 'tn'), FalseNegatives(name = 'fn'),
                BinaryAccuracy(name = 'accuracy'), Precision(name = 'precision'), Recall(name = 'recall'), AUC(name = 'auc')]
     model.compile(optimizer = Adam(learning_rate = 0), loss = BinaryCrossentropy(), metrics = metrics)
-    model.fit(train, validation_data = validation, epochs = EPOCHS, verbose = 1, callbacks = [learning_rate_scheduler])
+    model.fit(train, validation_data = validation, epochs = EPOCHS, verbose = 1, callbacks = [learning_rate_scheduler, tb_callback])
     
     return model
 
@@ -143,7 +147,7 @@ if __name__ == '__main__':
     model = create_model(train_ds, val_ds, model_args)
     evaluate_model(model, test_ds)
 
-    save_model(model, 'malaria_diagnosis_da_01')
+    # save_model(model, 'malaria_diagnosis_da_01')
 
 
 

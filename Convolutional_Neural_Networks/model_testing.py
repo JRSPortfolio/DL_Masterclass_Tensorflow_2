@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import tensorflow_datasets as tfds
-from keras.models import load_model
+from tensorflow.keras.models import load_model #type: ignore
 
 dataset, dataset_info = tfds.load('malaria', with_info = True, as_supervised = True, shuffle_files = True, data_dir = 'Convolutional_Neural_Networks/mds')
 

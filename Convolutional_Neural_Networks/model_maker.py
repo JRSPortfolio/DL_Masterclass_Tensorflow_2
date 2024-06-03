@@ -1,5 +1,6 @@
-from keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer
-from keras.models import Sequential
+from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer #type: ignore
+from tensorflow.keras.models import Sequential #type: ignore
+from tensorboard.plugins.hparams import api as hp
 
 
 class ModelArgs(dict):
