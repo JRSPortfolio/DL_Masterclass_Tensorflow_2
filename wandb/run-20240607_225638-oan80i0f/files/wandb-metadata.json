@@ -1,0 +1,128 @@
+{
+    "os": "Linux-5.15.0-107-generic-x86_64-with-glibc2.35",
+    "python": "3.11.9",
+    "heartbeatAt": "2024-06-07T21:56:38.914442",
+    "startedAt": "2024-06-07T21:56:38.263168",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/joao/Programming/Projects/Udemy-DLMwT2/Convolutional_Neural_Networks/malaria_diagnosis_model_w_metrics.py",
+    "codePathLocal": "Convolutional_Neural_Networks/malaria_diagnosis_model_w_metrics.py",
+    "codePath": "Convolutional_Neural_Networks/malaria_diagnosis_model_w_metrics.py",
+    "git": {
+        "remote": "git@github.com:JRSPortfolio/DL_Masterclass_Tensorflow_2.git",
+        "commit": "bb146668cb011c820a8dd35f531848e17f954570"
+    },
+    "email": "jrsalgueiro@live.com.pt",
+    "root": "/home/joao/Programming/Projects/Udemy-DLMwT2",
+    "host": "joao-delta",
+    "username": "joao",
+    "executable": "/home/joao/Programming/Projects/Udemy-DLMwT2/venv311/bin/python",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 2590.2315625,
+        "min": 2200.0,
+        "max": 3600.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2959.026,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 3600.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 3600.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2084.679,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 3600.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 3600.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        },
+        {
+            "current": 2200.0,
+            "min": 2200.0,
+            "max": 3600.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 227.71157455444336,
+            "used": 57.59992218017578
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 4070",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 4070",
+            "memory_total": 12878610432
+        }
+    ],
+    "memory": {
+        "total": 31.257888793945312
+    }
+}

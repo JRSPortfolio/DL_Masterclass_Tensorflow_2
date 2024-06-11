@@ -4,7 +4,7 @@ Convolutional Neural Network model for malaria diagnosis based on cell images
 
 
 import pandas as pd
-from numpy import arange
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import tensorflow as tf
@@ -17,7 +17,44 @@ from model_maker import ModelArgs, make_sequential
 from data_retrive_transform import SplitRatios, get_dataset, ds_shuffle_split, transform_test
 from datetime import datetime
 import tensorboard
+import wandb
+from wandb.integration.keras import WandbCallback
 
+class ImgWandbCb(WandbCallback):
+    def __init__(self, validation_data, num_samples = 10):
+        super().__init__()
+        self.num_samples = num_samples
+        self.validation_data = validation_data
+        
+    def get_random_samples(self):
+        rand_num = np.random.randint(0, len(self.validation_data) - self.num_samples)
+        val_sample = self.validation_data.skip(rand_num).take(self.num_samples)
+        return val_sample
+    
+    def name_labels(self, label):
+        if label == 0:
+            return 'Infected'
+        else:
+            return 'Uninfected'
+    
+    def on_epoch_end(self, epoch, logs = None):
+        samples = self.get_random_samples()
+        print()
+        print(len(samples))
+        print(type(samples))
+        for batch in samples:
+            images, labels = batch
+            predictions = self.model.predict(images[:self.num_samples])
+            predicted_labels = tf.argmax(predictions, axis=1)
+        
+        for i in range(self.num_samples):
+            image = images[i]
+            true_label = self.name_labels(labels[i])
+            pred_label = self.name_labels(predicted_labels[i])
+            caption = f"True: {true_label}, Pred: {pred_label}"
+            print(caption)
+            wandb.log({f"validation_sample_{i}": [wandb.Image(image, caption = caption)]})
+            
 def get_splits_from_dataset():
     dataset = get_dataset()
     ratios = SplitRatios(0.6, 0.2, 0.2)
@@ -28,7 +65,7 @@ def get_splits_from_dataset():
 ##
 ## Model creation with module
 ##
-EPOCHS = 2
+EPOCHS = 1
 
 # def scheduler(epoch, lr):
 #     if epoch <= 3:
@@ -61,14 +98,16 @@ def create_model(train, validation, model_args: ModelArgs):
     
     learning_rate_scheduler = LearningRateScheduler(scheduler, verbose = 1)
     # checkpoint_cb = checkpoint_callback()
-    tb_logdir = f"Convolutional_Neural_Networks/tensorboard_logs/{datetime.now().strftime('%d-%m-%Y_%H:%M')}/ia{str(model_args['img_args'])}_fa_{str(model_args['feat_args'])}"
-    tb_callback = TensorBoard(log_dir = tb_logdir, histogram_freq = 1, write_graph = True, update_freq = 'epoch')
+    # tb_logdir = f"Convolutional_Neural_Networks/tensorboard_logs/{datetime.now().strftime('%d-%m-%Y_%H:%M')}"
+    # tb_callback = TensorBoard(log_dir = tb_logdir, histogram_freq = 1, write_graph = True, update_freq = 'epoch', profile_batch = '10,30')
     
+    wandb.init(project = 'Malaria_Detection', entity = 'blorgus')
+    wdbc = ImgWandbCb(validation_data = validation)
     
     metrics = [TruePositives(name = 'tp'), FalsePositives(name = 'fp'), TrueNegatives(name = 'tn'), FalseNegatives(name = 'fn'),
                BinaryAccuracy(name = 'accuracy'), Precision(name = 'precision'), Recall(name = 'recall'), AUC(name = 'auc')]
     model.compile(optimizer = Adam(learning_rate = 0), loss = BinaryCrossentropy(), metrics = metrics)
-    model.fit(train, validation_data = validation, epochs = EPOCHS, verbose = 1, callbacks = [learning_rate_scheduler, tb_callback])
+    model.fit(train, validation_data = validation, epochs = EPOCHS, verbose = 1, callbacks = [learning_rate_scheduler, wdbc])
     
     return model
 
@@ -85,17 +124,17 @@ def evaluate_model(model, test):
 
     sns.lineplot(metrics[['accuracy', 'auc', 'val_accuracy', 'val_auc']], ax = axes01[0])
     axes01[0].set_xticks(range(EPOCHS))
-    axes01[0].set_yticks(arange(0.85, 1.002, 0.001))
+    axes01[0].set_yticks(np.arange(0.85, 1.002, 0.001))
     axes01[0].grid(True)
     
     sns.lineplot(metrics[['precision', 'recall', 'val_precision', 'val_recall']], ax = axes01[1])
     axes01[1].set_xticks(range(EPOCHS))
-    axes01[1].set_yticks(arange(0.85, 1.002, 0.001))
+    axes01[1].set_yticks(np.arange(0.85, 1.002, 0.001))
     axes01[1].grid(True)
     
     sns.lineplot(metrics[['loss', 'val_loss']], ax = axes01[2])
     axes01[2].set_xticks(range(EPOCHS))
-    axes01[2].set_yticks(arange(0, 0.25, 0.001))
+    axes01[2].set_yticks(np.arange(0, 0.25, 0.001))
     axes01[2].grid(True)
     
     print(f'Model eval: {model.evaluate(test)}')
@@ -145,9 +184,8 @@ if __name__ == '__main__':
                            d_activation = ['relu', 'relu', 'sigmoid'])
 
     model = create_model(train_ds, val_ds, model_args)
-    evaluate_model(model, test_ds)
-
+    # evaluate_model(model, test_ds)
+        
     # save_model(model, 'malaria_diagnosis_da_01')
-
 
 

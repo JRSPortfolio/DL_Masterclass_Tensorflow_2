@@ -14,7 +14,7 @@ class ModelArgs(dict):
             self['img_args'][layer] = [filters[i], kernel_size[i], strides[i], padding[i], img_activation[i]]
             
         for i in range(len(units)):
-            layer = f'layer_{i}'
+            layer = f'dense_{i}'
             self['feat_args'][layer] = [units[i], d_activation[i]]
             
             
