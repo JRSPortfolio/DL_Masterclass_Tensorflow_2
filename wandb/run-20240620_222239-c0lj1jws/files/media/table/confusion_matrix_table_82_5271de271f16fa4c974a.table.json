@@ -1,0 +1,1 @@
+{"columns": ["Actual", "Predicted", "nPredictions"], "data": [["Parasitized", "Parasitized", 7866.0], ["Parasitized", "Uninfected", 405.0], ["Uninfected", "Parasitized", 290.0], ["Uninfected", "Uninfected", 7973.0]]}
