@@ -1,7 +1,6 @@
 from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer #type: ignore
 from tensorflow.keras.models import Sequential #type: ignore
 from tensorboard.plugins.hparams import api as hp
-import wandb
 
 class ModelArgs(dict):
     def __init__(self, shape: tuple, filters: list, kernel_size: list, strides: list, padding: list, img_activation: list, units: list, d_activation: list):

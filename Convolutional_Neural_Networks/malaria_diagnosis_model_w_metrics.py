@@ -121,9 +121,6 @@ def create_model(train, validation, model_args: ModelArgs):
     print(model.summary())
     
     learning_rate_scheduler = LearningRateScheduler(scheduler, verbose = 1)
-    # checkpoint_cb = checkpoint_callback()
-    # tb_logdir = f"Convolutional_Neural_Networks/tensorboard_logs/{datetime.now().strftime('%d-%m-%Y_%H:%M')}"
-    # tb_callback = TensorBoard(log_dir = tb_logdir, histogram_freq = 1, write_graph = True, update_freq = 'epoch', profile_batch = '10,30')
     
     wandb.init(project = 'Malaria_Detection', entity = 'blorgus')
     wdbc = ImgWandbCb(validation_data = validation)

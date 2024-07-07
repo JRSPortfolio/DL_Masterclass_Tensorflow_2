@@ -78,13 +78,6 @@ def ds_shuffle_split_unbatched(ds, ratios: SplitRatios):
     train_ds = ds.take(int(ds_size * ratios['train']))
     val_ds = ds.skip(int(ds_size * ratios['train'])).take(int(ds_size * ratios['val']))
     test_ds = ds.skip(int(ds_size * ratios['train'])).skip(int(ds_size * ratios['val'])).take(int(ds_size * ratios['test']))
-        
-    print(train_ds.element_spec)
-    print('-------------------------')
-    print(val_ds.element_spec)
-    print('-------------------------')
-    print(test_ds.element_spec)
-    print('-------------------------')
     
     return train_ds, val_ds, test_ds
 
