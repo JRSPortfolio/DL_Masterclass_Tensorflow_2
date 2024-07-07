@@ -1,7 +1,7 @@
 from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer #type: ignore
 from tensorflow.keras.models import Sequential #type: ignore
 from tensorboard.plugins.hparams import api as hp
-
+import wandb
 
 class ModelArgs(dict):
     def __init__(self, shape: tuple, filters: list, kernel_size: list, strides: list, padding: list, img_activation: list, units: list, d_activation: list):
@@ -38,3 +38,25 @@ def make_sequential(model_args: ModelArgs):
     return model
     
 
+def make_sequential_config_wandb(config):        
+    model = Sequential([Conv2D(filters = config.conv2d_01_filters, kernel_size = config.conv2d_01_kernel,
+                               strides = config.conv2d_01_strides, padding = 'valid', activation = 'relu',
+                               input_shape = (90, 90, 3)),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Conv2D(filters = config.conv2d_02_filters, kernel_size = config.conv2d_02_kernel,
+                               strides = config.conv2d_02_strides, padding = 'valid', activation = 'relu'),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Conv2D(filters = config.conv2d_03_filters, kernel_size = config.conv2d_03_kernel,
+                               strides = config.conv2d_03_strides, padding = 'valid', activation = 'relu'),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Flatten(),
+                        Dense(units = config.dense_01, activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = config.dense_02, activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = 1, activation = 'sigmoid')])
+    
+    return model

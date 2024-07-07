@@ -37,37 +37,47 @@ class ImgWandbCb(WandbCallback):
         else:
             return 'Uninfected'
         
-    def make_conf_matrix(self):
+    def make_epoch_preds(self):
         predicted_labels = []
         y_true = []
+        probas = []
         
         for images, labels in self.validation_data.as_numpy_iterator():
-            predictions = (self.model.predict(images) > 0.5).astype('int32')
-            predicted_labels.extend(predictions)
+            preds = self.model.predict(images)
+            predicted_labels.extend((preds > 0.5).astype('int32'))
             y_true.extend(labels)
+            probas.extend(preds)
             
+        probas = np.column_stack([probas, [1 - i for i in probas]])
         predicted_labels = np.array(predicted_labels).flatten()
         y_true = np.array(y_true)
         
-        wandb.log({'confusion_matrix' : wandb.plot.confusion_matrix(y_true = y_true, preds =  predicted_labels, class_names = ['Parasitized', 'Uninfected'])})
-        
-    def on_epoch_end(self, epoch, logs = None):
+        return predicted_labels, y_true, probas
+    
+    def image_sampling_on_epoch(self):
         samples = self.get_random_samples()
 
-        for batch in samples:
-            images, labels = batch
-            predictions = self.model.predict(images[:self.num_samples])
-            predicted_labels = tf.argmax(predictions, axis = 1)
-            
+        for images, labels in samples.as_numpy_iterator():
+            predictions = (self.model.predict(images) > 0.5).astype('int32')
+            predicted_labels = np.array(labels)
+                  
         for i in range(self.num_samples):
             image = images[i]
-            true_label = self.name_labels(labels[i])
-            pred_label = self.name_labels(predicted_labels[i])
+            true_label = self.name_labels(predicted_labels[i])
+            pred_label = self.name_labels(predictions[i])
             caption = f"True: {true_label}, Pred: {pred_label}"
-            wandb.log({f"validation_sample_{i}": [wandb.Image(image, caption = caption)]})
+            wandb.log({f"validation_sample_{i}": [wandb.Image(image, caption = caption)]})  
         
-        self.make_conf_matrix()
+    def on_epoch_end(self, epoch, logs):
         super().on_epoch_end(epoch, logs)
+        self.image_sampling_on_epoch()
+        
+        pred_labels = ['Parasitized', 'Uninfected']
+        predicted_y, y_true, probas = self.make_epoch_preds()
+                
+        wandb.log({'Confusion_Matrix' : wandb.plot.confusion_matrix(y_true = y_true, preds =  predicted_y, class_names = pred_labels),
+                   'ROC_Curve' : wandb.plot.roc_curve(y_true = y_true, y_probas = probas, labels = pred_labels)})
+        # wandb.log({'ROC_Curve' : wandb.plot.roc_curve(y_true = y_true, y_probas = predicted_y)})
             
 def get_splits_from_dataset():
     dataset = get_dataset()
@@ -79,7 +89,7 @@ def get_splits_from_dataset():
 ##
 ## Model creation with module
 ##
-EPOCHS = 10
+EPOCHS = 2
 
 # def scheduler(epoch, lr):
 #     if epoch <= 3:

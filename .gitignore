@@ -161,3 +161,9 @@ db_url.py
 
 # checkpoints
 model_checkpoints/
+
+#wandb artifacts
+wandb/
+
+#notes about projects
+notes.txt
