@@ -11,6 +11,7 @@ from model_maker import make_sequential_config_wandb
 from data_retrive_transform import SplitRatios, get_dataset, ds_shuffle_split
 import wandb
 from wandb.integration.keras import WandbCallback
+from wandb_info import wandb_login_info
 
 class ImgWandbCb(WandbCallback):
     def __init__(self, validation_data, num_samples = 10):
@@ -89,7 +90,8 @@ def get_splits_from_dataset():
     return train_ds, val_ds, test_ds
 
 def sweep_models(config = None):
-    with wandb.init(project = 'Malaria_Detection_Sweep', entity = 'blorgus', config = config):
+    proj, ent = wandb_login_info()
+    with wandb.init(project = proj, entity = ent, config = config):
         config = wandb.config
     
         model = make_sequential_config_wandb(config)

@@ -165,5 +165,8 @@ model_checkpoints/
 #wandb artifacts
 wandb/
 
+#wandb infos
+wandb_info.py
+
 #notes about projects
 notes.txt
