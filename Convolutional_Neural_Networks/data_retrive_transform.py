@@ -7,7 +7,7 @@ import tensorflow as tf
 ## Define dataset slit ratios for train, test and validation
 ##
 class SplitRatios(dict):
-    def __init__(self, train_ratio: float, val_ratio: float, test_ratio):
+    def __init__(self, train_ratio: float, val_ratio: float, test_ratio: float):
         super(SplitRatios, self).__init__()
         self['train'] = train_ratio
         self['val'] = val_ratio
@@ -78,6 +78,10 @@ def ds_shuffle_split_unbatched(ds, ratios: SplitRatios):
     train_ds = ds.take(int(ds_size * ratios['train']))
     val_ds = ds.skip(int(ds_size * ratios['train'])).take(int(ds_size * ratios['val']))
     test_ds = ds.skip(int(ds_size * ratios['train'])).skip(int(ds_size * ratios['val'])).take(int(ds_size * ratios['test']))
+    
+    train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
+    val_ds = val_ds.prefetch(tf.data.AUTOTUNE)
+    test_ds = test_ds.prefetch(tf.data.AUTOTUNE)
     
     return train_ds, val_ds, test_ds
 
