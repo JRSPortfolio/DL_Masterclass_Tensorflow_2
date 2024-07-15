@@ -8,6 +8,8 @@ class ModelConfigs(dict):
                  conv2d_02_strides = None, conv2d_03_filters = None, conv2d_03_kernel = None,
                  conv2d_03_strides = None, dense_01 = None, dense_02 = None):
         """
+        Configuration class for model arguments
+        
         name: String with the name of the model/model in project
         method: String naming the method to be used in wandb sweep (grid, bayes, random)
         metrics: Dictionary to set the goal in wandb sweep (eg:  {'metric' : {'name' : 'accuracy',
