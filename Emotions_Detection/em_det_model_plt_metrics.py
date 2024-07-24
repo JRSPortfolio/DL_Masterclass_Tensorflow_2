@@ -6,6 +6,7 @@ from tensorflow.keras.optimizers import Adam  #type: ignore
 from tensorflow.keras.losses import CategoricalCrossentropy #type: ignore
 from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall, TopKCategoricalAccuracy #type: ignore
 from tensorflow.keras.models import load_model #type: ignore
+from sklearn.metrics import confusion_matrix
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,7 +32,29 @@ def make_model(train_ds, val_ds, configs: ModelConfigs):
     model.fit(train_ds, validation_data = val_ds, epochs = configs['epochs'], verbose = 1)
     
     return model
+
+def set_conf_matrix(model, test_ds):
+    test_data, test_labels = transform_test(test_ds)
     
+    preds = []
+    
+    for image in test_data:
+        image = np.array(image).reshape(1, 300, 300, 3)
+        pred = model(image, training = False).numpy()[0]
+        preds.append(pred)
+    
+    preds_labels = np.argmax(np.array(preds), axis = 1)
+    test_labels = np.argmax(test_labels, axis = 1)
+    
+    cm = confusion_matrix(test_labels, preds_labels)
+    print(cm)
+        
+    plt.figure(figsize = (36, 24))
+    sns.heatmap(cm, annot = True)
+    plt.title('Confusion Matrix')
+    plt.ylabel('Real')
+    plt.xlabel('Predicted')
+     
 def show_model_metrics(model, test_ds, configs: ModelConfigs):
     metrics =  pd.DataFrame(model.history.history)
 
@@ -55,8 +78,8 @@ def show_model_metrics(model, test_ds, configs: ModelConfigs):
     
     print(f'Model eval: {model.evaluate(test_ds)}')
     
-    plt.show()
-    
+    set_conf_matrix(model, test_ds)
+     
 # def test_random_image(model):
 #     folders = ['angry', 'happy', 'sad']
 #     r_folder = np.random.randint(0, 3)
@@ -72,10 +95,6 @@ def show_model_metrics(model, test_ds, configs: ModelConfigs):
 #     plt.imshow(tf.constant(image, dtype = tf.float32))
 #     plt.show()
     
-    
-    
-    
-
 def config_values():
     # image_size = (200, 200)
     # learning_rate = [0.01]
@@ -112,7 +131,7 @@ def config_values():
     
     image_size = (300, 300)
     learning_rate = 0.005
-    epochs = 200
+    epochs = 60
     batch_size = 16
     conv2d_01_filters = 80
     conv2d_01_kernel = 6
@@ -150,7 +169,7 @@ def transform_test(test_ds):
 
     test_labels = np.array(test_labels)
     test_data = np.array(test_data)
-    
+        
     return test_data, test_labels
   
 def test_model(model, test_ds):
@@ -167,14 +186,15 @@ def test_model(model, test_ds):
         image = np.array(test_data[i]).reshape(1, 300, 300, 3)
         pred = model(image, training = False)
         axes[ax_x, ax_y].imshow(test_data[i] / 255)
-        axes[ax_x, ax_y].set_title(f"Real: {labels[np.argmax(np.round(test_labels[i]).astype(int))]} | Pred: {labels[np.argmax(np.round(np.array(pred)).astype(int))]}")
+        real_label_val = np.argmax(test_labels[i]).astype(int)
+        pred_label_val = np.argmax(np.round(np.array(pred)).astype(int))
+        
+        axes[ax_x, ax_y].set_title(f"Real: {labels[real_label_val]} | Pred: {labels[pred_label_val]}")
         ax_y += 1
         if ax_y == 6:
             ax_y = 0
             ax_x += 1
-                    
-    plt.show()
-    
+                            
 if __name__ == '__main__':
     configs = config_values()
     train_ds, val_ds, test_ds = get_dataset(configs)
@@ -184,4 +204,5 @@ if __name__ == '__main__':
 
     # model = load_model('Emotions_Detection/keras_models/test_01.keras')
     test_model(model, test_ds)
+    plt.show()
 
