@@ -26,18 +26,21 @@ def data_augmentation(dataset):
     def flip_horizontal(image, label):
         return tf.image.flip_left_right(image), label
     
-    def random_brigth(image, label):
-        return tf.image.random_brightness(image, 0.4), label
+    def random_rot(image, label):
+        return tf.imag
     
-    def random_contrast(image, label):
-        return tf.image.random_contrast(image, 0.1, 0.6), label
+    # def random_brigth(image, label):
+    #     return tf.image.random_brightness(image, 0.4), label
+    
+    # def random_contrast(image, label):
+    #     return tf.image.random_contrast(image, 0.1, 0.6), label
 
     ds = dataset.map(flip_horizontal)
     return_ds = dataset.concatenate(ds)
-    ds = dataset.map(random_brigth)
-    return_ds = return_ds.concatenate(ds)
-    ds = dataset.map(random_contrast)
-    return_ds = return_ds.concatenate(ds)
+    # ds = dataset.map(random_brigth)
+    # return_ds = return_ds.concatenate(ds)
+    # ds = dataset.map(random_contrast)
+    # return_ds = return_ds.concatenate(ds)
     
     return return_ds
     
