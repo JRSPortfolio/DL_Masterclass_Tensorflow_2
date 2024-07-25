@@ -17,7 +17,30 @@ def create_dataset(configs: ModelConfigs):
                                            color_mode = 'rgb',
                                            image_size = configs['image_size'],
                                            batch_size = configs['batch_size'])
+    
+    dataset = data_augmentation(dataset)
+    
     return dataset
+
+def data_augmentation(dataset):
+    def flip_horizontal(image, label):
+        return tf.image.flip_left_right(image), label
+    
+    def random_brigth(image, label):
+        return tf.image.random_brightness(image, 0.4), label
+    
+    def random_contrast(image, label):
+        return tf.image.random_contrast(image, 0.1, 0.6), label
+
+    ds = dataset.map(flip_horizontal)
+    return_ds = dataset.concatenate(ds)
+    ds = dataset.map(random_brigth)
+    return_ds = return_ds.concatenate(ds)
+    ds = dataset.map(random_contrast)
+    return_ds = return_ds.concatenate(ds)
+    
+    return return_ds
+    
 
 def ds_shuffle_split(dataset, ratios: SplitRatios):
     dataset = dataset.shuffle(buffer_size = 8, reshuffle_each_iteration = True)

@@ -38,8 +38,9 @@ def set_conf_matrix(model, test_ds):
     
     preds = []
     
+    i = 0
     for image in test_data:
-        image = np.array(image).reshape(1, 300, 300, 3)
+        image = np.array(image).reshape(1, 150, 150, 3)
         pred = model(image, training = False).numpy()[0]
         preds.append(pred)
     
@@ -129,9 +130,9 @@ def config_values():
     # dense_02 = 64
     # dense_03 = 32
     
-    image_size = (300, 300)
+    image_size = (150, 150)
     learning_rate = 0.005
-    epochs = 60
+    epochs = 100
     batch_size = 16
     conv2d_01_filters = 80
     conv2d_01_kernel = 6
@@ -183,7 +184,7 @@ def test_model(model, test_ds):
     ax_x = int(0)
     ax_y = int(0)
     for i in random_list:
-        image = np.array(test_data[i]).reshape(1, 300, 300, 3)
+        image = np.array(test_data[i]).reshape(1, 150, 150, 3)
         pred = model(image, training = False)
         axes[ax_x, ax_y].imshow(test_data[i] / 255)
         real_label_val = np.argmax(test_labels[i]).astype(int)
