@@ -170,3 +170,13 @@ wandb_info.py
 
 #notes about projects
 notes.txt
+
+#
+em_det_model_plt_metrics_w_records.py
+
+#saved models
+keras_models
+
+#tensorflow logs
+tf_records
+tflogs_fit
