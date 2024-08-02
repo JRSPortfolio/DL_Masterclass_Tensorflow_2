@@ -113,3 +113,31 @@ def make_sequential_hparams(config):
                         Dense(units = 3, activation = 'softmax')])
     
     return model
+
+def make_sequential_wandb(config):
+    resize_rescale = Sequential([Resizing(config.image_size[0], config.image_size[1]), Rescaling(1/255)])
+    
+    model = Sequential([InputLayer(input_shape = (None, None, 3)),
+                        resize_rescale,
+                        Conv2D(filters = config.conv2d_01_filters, kernel_size = config.conv2d_01_kernel,
+                               strides = config.conv2d_01_strides, padding = 'valid', activation = 'relu'),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Conv2D(filters = config.conv2d_02_filters, kernel_size = config.conv2d_02_kernel,
+                               strides = config.conv2d_02_strides, padding = 'valid', activation = 'relu'),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Conv2D(filters = config.conv2d_03_filters, kernel_size = config.conv2d_03_kernel,
+                               strides = config.conv2d_03_strides, padding = 'valid', activation = 'relu'),
+                        BatchNormalization(),
+                        MaxPool2D(pool_size = 2, strides = 2),
+                        Flatten(),
+                        Dense(units = config.dense_01, activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = config.dense_02, activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = config.dense_03, activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = 3, activation = 'softmax')])
+    
+    return model
