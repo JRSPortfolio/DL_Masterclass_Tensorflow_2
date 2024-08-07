@@ -11,3 +11,5 @@ Libraries used:
 - scikit-learn
 - tensorflow
 - tensorflow-datasets
+- tensorboard
+- wandb

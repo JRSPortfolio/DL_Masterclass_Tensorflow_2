@@ -17,8 +17,8 @@ def create_dataset(configs: ModelConfigs):
                                            class_names = ['angry', 'happy', 'sad'],
                                            color_mode = 'rgb',
                                            image_size = configs['image_size'],
-                                        #    batch_size = configs['batch_size'])  ## for model version with plt logs
-                                           batch_size = configs['batch_size'][0])  ## for model version with tb logs
+                                           batch_size = configs['batch_size'])  ## for model version with plt logs
+                                        #    batch_size = configs['batch_size'][0])  ## for model version with tb logs
     
     dataset = data_augmentation(dataset)
     

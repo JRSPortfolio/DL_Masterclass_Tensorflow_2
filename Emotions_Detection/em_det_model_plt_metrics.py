@@ -30,39 +30,8 @@ def make_model(train_ds, val_ds, configs: ModelConfigs):
     model.fit(train_ds, validation_data = val_ds, epochs = configs['epochs'], verbose = 1)
     
     return model
-     
-# def test_random_image(model):
-#     folders = ['angry', 'happy', 'sad']
-#     r_folder = np.random.randint(0, 3)
-#     image_folder = f'Emotions_Detection/dataset/{folders[r_folder]}'
-#     r_image = np.random.randint(0, len(os.listdir(image_folder)))
-#     image = cv2.imread(f'{image_folder}/{r_image}.jpg')
-#     im = tf.constant(image, dtype = tf.float32)
-#     im = tf.expand_dims(im, axis = 0)
-#     print(folders[tf.argmax(model(im), axis = -1).numpy()[0]])
-    
-#     print(image_folder)
-#     print(r_image)
-#     plt.imshow(tf.constant(image, dtype = tf.float32))
-#     plt.show()
-    
-def config_values():
-    # image_size = (200, 200)
-    # learning_rate = [0.01]
-    # epochs = [5]
-    # batch_size = 16
-    # conv2d_01_filters = [24]
-    # conv2d_01_kernel = [6]
-    # conv2d__01_strides = [1]
-    # conv2d_02_filters = [16]
-    # conv2d_02_kernel = [4]
-    # conv2d_02_strides = [1]
-    # conv2d_03_filters = [8]
-    # conv2d_03_kernel = [2]
-    # conv2d_03_strides = [1]
-    # dense_01 = [128]
-    # dense_02 = [32]
-        
+
+def config_values():   
     image_size = (200, 200)
     learning_rate = 0.005
     epochs = 200

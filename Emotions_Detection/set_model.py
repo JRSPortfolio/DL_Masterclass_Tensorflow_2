@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer #type: ignore
+from tensorflow.keras.layers import Dense, Conv2D, MaxPool2D, Flatten, BatchNormalization, InputLayer, GlobalAveragePooling2D #type: ignore
 from tensorflow.keras.models import Sequential #type: ignore
 from tensorflow.keras.layers import Resizing, Rescaling #type: ignore
 
@@ -138,6 +138,17 @@ def make_sequential_wandb(config):
                         BatchNormalization(),
                         Dense(units = config.dense_03, activation = 'relu'),
                         BatchNormalization(),
+                        Dense(units = 3, activation = 'softmax')])
+    
+    return model
+
+def make_sequential_transfer_learning(config, backbone):
+    model = Sequential([InputLayer(input_shape = (config['image_size'][0], config['image_size'][1], 3)),
+                        backbone,
+                        GlobalAveragePooling2D(),
+                        Dense(units = config['dense_01'], activation = 'relu'),
+                        BatchNormalization(),
+                        Dense(units = config['dense_02'], activation = 'relu'),
                         Dense(units = 3, activation = 'softmax')])
     
     return model
