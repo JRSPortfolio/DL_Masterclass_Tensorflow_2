@@ -3,11 +3,6 @@ from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall, Top
 from tensorflow.keras.losses import CategoricalCrossentropy #type: ignore
 from tensorflow.keras.optimizers import Adam  #type: ignore
 import matplotlib.pyplot as plt
-
-import sys
-import os
-parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.append(parent_dir)
 from set_model import ModelConfigs, make_sequential_transfer_learning
 from em_det_model_plt_metrics import get_dataset, show_model_metrics, test_model
 
