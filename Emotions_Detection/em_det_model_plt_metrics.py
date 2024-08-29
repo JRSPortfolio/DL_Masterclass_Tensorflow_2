@@ -1,5 +1,5 @@
 import tensorflow as tf
-from data_preparation import SplitRatios, create_dataset, ds_shuffle_split_prefetch
+from data_preparation import SplitRatios, create_dataset, ds_shuffle_split_prefetch, set_class_weights
 from set_model import ModelConfigs, make_sequential_model
 from tensorflow.keras.optimizers import Adam  #type: ignore
 from tensorflow.keras.losses import CategoricalCrossentropy #type: ignore
@@ -22,12 +22,14 @@ def make_model(train_ds, val_ds, configs: ModelConfigs):
     metrics = [CategoricalAccuracy(name = 'accuracy'), TopKCategoricalAccuracy(k = 2, name = 'top_k_acc'), Precision(name = 'precision'),
                Recall(name = 'recall')]
     
+    class_weights = set_class_weights()
+    
     model = make_sequential_model(configs)
     
     loss = CategoricalCrossentropy()
     
     model.compile(optimizer = Adam(learning_rate = configs['learning_rate']), loss = loss, metrics = metrics)
-    model.fit(train_ds, validation_data = val_ds, epochs = configs['epochs'], verbose = 1)
+    model.fit(train_ds, validation_data = val_ds, epochs = configs['epochs'], verbose = 1, class_weight = class_weights)
     
     return model
 

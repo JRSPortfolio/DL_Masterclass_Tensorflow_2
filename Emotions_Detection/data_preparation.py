@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image_dataset_from_directory #type: ignore
 from set_model import ModelConfigs
 from tensorflow.train import BytesList, FloatList, Example, Features, Feature #type: ignore
-
+import os
 class SplitRatios(dict):
     def __init__(self, train_ratio: float, val_ratio: float, test_ratio: float):
         super(SplitRatios, self).__init__()
@@ -98,3 +98,14 @@ def encode_image(image, label):
     image = tf.io.encode_jpeg(image)
     return image, label
 
+def set_class_weights():
+       folders = ['angry', 'happy', 'sad']
+       n_samples = []
+       totals = 0
+       for folder in folders:
+              folder_path = f'Emotions_Detection/dataset/{folder}'
+              n_samples.append(len(os.listdir(folder_path)))
+              totals = totals + len(os.listdir(folder_path))
+              
+       class_weights = {0: totals / n_samples[0], 1 : totals / n_samples[1], 2 : totals / n_samples[2]}
+       return class_weights

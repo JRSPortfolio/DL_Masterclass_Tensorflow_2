@@ -152,3 +152,6 @@ def make_sequential_transfer_learning(config, backbone):
                         Dense(units = 3, activation = 'softmax')])
     
     return model
+
+
+
