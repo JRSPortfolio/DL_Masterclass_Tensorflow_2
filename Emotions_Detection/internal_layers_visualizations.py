@@ -1,12 +1,7 @@
 from tensorflow.keras.applications.vgg16 import VGG16 #type: ignore
 from tensorflow.keras import Model #type: ignore
-from tensorflow.keras.metrics import CategoricalAccuracy, Precision, Recall, TopKCategoricalAccuracy #type: ignore
-from tensorflow.keras.losses import CategoricalCrossentropy #type: ignore
-from tensorflow.keras.optimizers import Adam  #type: ignore
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from set_model import ModelConfigs, make_sequential_transfer_learning
-from em_det_model_plt_metrics import get_dataset, show_model_metrics, test_model
 import numpy as np
 import os
 import cv2
